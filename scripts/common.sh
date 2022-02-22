@@ -11,7 +11,13 @@ sudo swapoff -a
 sudo sed -i 's/\/swap/#swap/' /etc/fstab
 #############
 echo quit | openssl s_client -showcerts -servername packages.cloud.google.com -connect www.naver.com:443 > kube.crt
-sed -ni '67,86p' kube.crt
+
+#sed -ni '73,99p' kube.crt
+#find second certifcate startline and endline  and cut between of them to make kube.crt
+SLINE=$(grep -n BEGIN kube.crt | cut -d: -f1 | tail -1)
+ELINE=$(grep -n END kube.crt | cut -d: -f1 | tail -1)
+sed -ni "$SLINE"','"$ELINE"'p' kube.crt
+
 sudo cp kube.crt /usr/local/share/ca-certificates/kube.crt
 sudo update-ca-certificates
 #############
